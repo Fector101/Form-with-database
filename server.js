@@ -51,7 +51,6 @@ app.post('/submit', async (req, res) => {
 
 // Example of another rotue to see visit(localhost:1012/product-example)
 app.get('/product-example',(req,res)=>{
-    // res.write('Some Lame Product.')
     res.write('<body>Some Lame Product.</body>')
     res.end()
 })

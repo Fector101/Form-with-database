@@ -30,13 +30,15 @@ CREATE TABLE users (
    submission_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
-4. In The .env file 
+Code 👆🏻👆🏻 above can be found in the [structure.sql](structure.sql) File.
+
+4. In The [.env](.env) file 
 ```
 DB_PASS=?1HenryHart/?1
 DB_PORT=3306
 ```
 change `?1HenryHart/?1` to the password you used in the SQL server Configurator.<br>
-And `3306` should be the default port if not change to the one you set in the SQL server Configurator.
+`3306` should be the default port if not change to the one you set in the SQL server Configurator.
 
 
 5. Then in your command line run (`nodemon server.js` OR `node server.js`).
