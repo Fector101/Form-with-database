@@ -31,7 +31,7 @@ CREATE TABLE users (
 DB_PASS=?1HenryHart/?1
 DB_PORT=3306
 ```
-change `?1HenryHart/?1` to the password you used in the SQL app.
+change `?1HenryHart/?1` to the password you used in the SQL app.<br>
 And `3306` should be the default port if not change to the one you set in the SQL app.
 
 
