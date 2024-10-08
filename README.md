@@ -3,13 +3,15 @@
 [NodeJS](https://nodejs.org/en/download/prebuilt-installer) Installed.
 # To Run Locally
 * [Step 1] Open Command prompt in Repository path and Run: <br>
-`npm install`<br> 
-`npm install -g nodemon`
+```
+npm install
+npm install -g nodemon
+```
 
 * [Step 2] Download [MySQL 9.0 Configurator](https://dev.mysql.com/downloads/mysql/9.0.html) and start your SQl Server.
 
 * [Step 3] The 'MySQL 9.0 Command Line Client' app will be installed with 'MySQL 9.0 Configurator'
-Then paste this code below to create database and table
+Then paste this code below in 'MySQL 9.0 Command Line Client' to create database and table
 ```
 CREATE DATABASE mai_users;
 USE mai_users;
@@ -24,9 +26,13 @@ CREATE TABLE users (
    submission_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
-* [Step 4] In .env file <br>`DB_PASS=?1HenryHart/?1` <br> `DB_PORT=3306` <br>
-  change `?1HenryHart/?1` to the password you used in the SQL app.
-  And `3306` should be the default port if not change to the one you set in the SQL app.
+* [Step 4] In .env file 
+```
+DB_PASS=?1HenryHart/?1
+DB_PORT=3306
+```
+change `?1HenryHart/?1` to the password you used in the SQL app.
+And `3306` should be the default port if not change to the one you set in the SQL app.
 
 
 * [Step 5] Then in your command line run (`nodemon server.js` OR `node server.js`).
