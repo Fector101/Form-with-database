@@ -47,5 +47,8 @@ change `?1HenryHart/?1` to the password you used in the SQL server Configurator.
 
 
 # To View Data in DataBase.
-* After submitting data from `http://localhost:1012`.
+* After submitting data from `http://localhost:1012`
 * Open 'MySQL 9.0 Command Line Client' app and Run `SELECT * FROM users;`
+
+# Steps To Run On Vercel
+* Will Add Later 🙂
