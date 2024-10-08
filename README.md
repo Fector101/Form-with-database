@@ -30,7 +30,7 @@ CREATE TABLE users (
    submission_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
-Code 👆🏻👆🏻 above can be found in the [structure.sql](structure.sql) File.
+Code 👆🏻👆🏻 above can be found in the [structure.sql](structure.sql) File for later reference.
 
 4. In The [.env](.env) file 
 ```
@@ -43,8 +43,9 @@ change `?1HenryHart/?1` to the password you used in the SQL server Configurator.
 
 5. Then in your command line run (`nodemon server.js` OR `node server.js`).
 
-6. Then you can visit `http://localhost:1012` in your brower to view result.
+6. Then you visit `http://localhost:1012` in your brower to view result.
 
 
 # To View Data in DataBase.
+* After submitting data from `http://localhost:1012`.
 * Open 'MySQL 9.0 Command Line Client' app and Run `SELECT * FROM users;`
