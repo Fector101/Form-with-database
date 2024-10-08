@@ -1,3 +1,7 @@
+-- After starting server Open search and open (MySQL 9.0 Command Line Client) app 
+-- And paste code below
+-- This is the code to create database and table
+
 CREATE DATABASE mai_users;
 
 USE mai_users;
