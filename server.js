@@ -3,60 +3,29 @@
 const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
-
-
 const { google } = require('googleapis')
-const mysql = require('mysql')
-const bcrypt = require('bcrypt')
-const sheets = google.sheets('v4')
 
-// intiliaizing express app
+// Initializing express app
 const app = express()
 
-app.use(express.static(path.join(__dirname,'public')))
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(bodyParser.urlencoded({ extended: true }))
 
-//  Loading Enivornment Variables
-require('dotenv').config(); // Load environment variables from .env file
+// Loading Environment Variables
+require('dotenv').config() // Load environment variables from .env file
 
-// Creating connection with Database
-const db = mysql.createConnection({
-    host: process.env.DB_HOST,  // set to localhost
-    user: process.env.DB_USER,  // default is root
-    password: process.env.DB_PASS,  //The password you used in the sql app replace it with "?1HenryHart/?1"
-    database: process.env.DB_NAME   //The mai_users you used in the sql command line
-})
-db.connect((err) => {
-    if (err) throw err // Throws error if couldn't connect
-    console.log('Database connected!')
-})
+// Google Sheets setup
+const sheets = google.sheets('v4')
 
-// This is to parse and encode data from user
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
-
-// This display's the main page
-app.get('/',(req,res)=>{
-    res.sendFile(__dirname+'/public/index.html') //This sends a file to our home page
-})
-
-
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'password',
-  database: 'form_db'
-});
-
-// function to add user
+// Function to add user data to Google Sheets
 async function appendToGoogleSheet(data) {
   const auth = new google.auth.GoogleAuth({
-    keyFile: 'credentials.json', 
+    keyFile: 'credentials.json',
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
+  })
 
   const authClient = await auth.getClient();
-  const sheetId = '12GOo_UtMRf70zgty01FkPjAtaVqrpWVGFL8cK7w1F8g'
+  const sheetId = '12GOo_UtMRf70zgty01FkPjAtaVqrpWVGFL8cK7w1F8g'; // Your Spreadsheet ID
 
   const request = {
     spreadsheetId: sheetId,
@@ -77,25 +46,43 @@ async function appendToGoogleSheet(data) {
   }
 }
 
-// submit route 'for when the submit button is clicked'
-app.post('/submit-form', (req, res) => {
-  const formData = req.body;
-  const sql = `INSERT INTO form_data (name, email, age, phone, gender, address, country, dob, occupation, feedback) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  db.query(sql, [formData.name, formData.email, formData.age, formData.phone, formData.gender, formData.address, formData.country, formData.dob, formData.occupation, formData.feedback], (err, result) => {
-    if (err) throw err;
-    res.send('Form data submitted');
-  });
+// This displays the main page
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html')); // This sends a file to our home page
+})
+
+// Submit route for when the submit button is clicked
+app.post('/submit-form', async (req, res) => {
+  const formData = req.body
+
+  // Prepare data array for Google Sheets
+  const data = [
+    formData.name,
+    formData.email,
+    formData.age,
+    formData.phone,
+    formData.gender,
+    formData.address,
+    formData.country,
+    formData.dob,
+    formData.occupation,
+    formData.feedback,
+  ]
+
+  // Append the data to Google Sheets
+  await appendToGoogleSheet(data);
+
+  res.send('Form data submitted');
 });
-// For when people try to go to sub-url's that don't exist
-app.use((req,res)=>{
-    res.status(404).send(`Page Sinked, i.e Page dosen't exist`)
+
+// For when people try to go to sub-URLs that don't exist
+app.use((req, res) => {
+  res.status(404).send(`Page not found.`);
 })
 
 // This starts an express server
-// Our port number an be anything in this case 1012, 1012 is like www.amazon.com
-// The (localhost:1012/product-example) is like (www.amazon.com/product-example)
-const port = 1012
+const port = 1012;
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`)
-    console.log(`Open http://localhost:${port} in your brower.`)
+  console.log(`Server running on port ${port}`);
+  console.log(`Open http://localhost:${port} in your browser.`);
 })
