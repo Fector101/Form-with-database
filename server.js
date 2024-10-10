@@ -55,10 +55,14 @@ app.get('/product-example',(req,res)=>{
     res.end()
 })
 
+app.get('/get-users',(req,res)=>{
+    res.status(200).json({ message: 'All User data backend.'})
+})
+
 // For when people try to go to sub-url's that don't exist
 app.use((req,res)=>{
     res.status(404).send(`Page Sinked, i.e Page dosen't exist`)
-  })
+})
 
 // This starts an express server
 // Our port number an be anything in this case 1012, 1012 is like www.amazon.com
