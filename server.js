@@ -2,9 +2,11 @@
 const mysql = require('mysql2')
 const express = require('express')
 const bcrypt = require('bcrypt')
-
+const path = require('path')
 // intiliaizing express app
 const app = express()
+
+app.use(express.static(path.join(__dirname,'public')))
 
 //  Loading Enivornment Variables
 require('dotenv').config(); // Load environment variables from .env file
