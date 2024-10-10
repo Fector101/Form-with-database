@@ -29,7 +29,7 @@ async function appendToGoogleSheet(data) {
 
   const request = {
     spreadsheetId: sheetId,
-    range: 'Sheet1!A1', // Where to append the data
+    range: 'Sheet1!A1:A',
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
     resource: {
