@@ -20,7 +20,7 @@ const sheets = google.sheets('v4')
 // Function to add a user data to Google Sheets
 async function appendToGoogleSheet(data) {
   const auth = new google.auth.GoogleAuth({
-    keyFile: 'credentials.json',
+    keyFile: path.join(__dirname,'credentials.json'),
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   })
 
