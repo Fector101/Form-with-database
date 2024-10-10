@@ -1,15 +1,19 @@
 // We use require to import packages
-const mysql = require('mysql');
-const express = require('express')
-const bcrypt = require('bcrypt')
-const path = require('path')
 
+const express = require('express')
+const path = require('path')
 const bodyParser = require('body-parser')
+
+
+const { google } = require('googleapis')
+const mysql = require('mysql')
+const bcrypt = require('bcrypt')
+const sheets = google.sheets('v4')
+
 // intiliaizing express app
 const app = express()
 
 app.use(express.static(path.join(__dirname,'public')))
-
 app.use(bodyParser.urlencoded({ extended: true }))
 
 //  Loading Enivornment Variables
@@ -43,6 +47,35 @@ const db = mysql.createConnection({
   password: 'password',
   database: 'form_db'
 });
+
+// function to add user
+async function appendToGoogleSheet(data) {
+  const auth = new google.auth.GoogleAuth({
+    keyFile: 'credentials.json', 
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+
+  const authClient = await auth.getClient();
+  const sheetId = 'your-spreadsheet-id';
+
+  const request = {
+    spreadsheetId: sheetId,
+    range: 'Sheet1!A1', // Where to append the data
+    valueInputOption: 'RAW',
+    insertDataOption: 'INSERT_ROWS',
+    resource: {
+      values: [data], // Data should be an array of arrays
+    },
+    auth: authClient,
+  };
+
+  try {
+    const response = await sheets.spreadsheets.values.append(request);
+    console.log('Data added to Google Sheet:', response);
+  } catch (err) {
+    console.error('Error adding data to Google Sheet:', err);
+  }
+}
 
 // submit route 'for when the submit button is clicked'
 app.post('/submit-form', (req, res) => {
