@@ -1,2 +1,4 @@
 node_modules
 trash.txt
+credentials.json
+.env

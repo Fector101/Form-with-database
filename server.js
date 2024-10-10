@@ -3,6 +3,8 @@ const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
 const { google } = require('googleapis')
+// const {authenticate} = require('@google-cloud/local-auth');
+
 
 // Initializing express app
 const app = express()
@@ -13,25 +15,29 @@ app.use(bodyParser.urlencoded({ extended: true }))
 // Loading Environment Variables
 require('dotenv').config() // Load environment variables from .env file
 
-// Google Sheets setup
-const sheets = google.sheets('v4')
 
 // Function to add user data to Google Sheets
 async function appendToGoogleSheet(data) {
   const auth = new google.auth.GoogleAuth({
-    credentials: {
-      private_key: process.env.GOOGLE_PRIVATE_KEY, // Ensure this matches the .env variable
-      client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    },
-    projectId: process.env.GOOGLE_PROJECT_ID,
+    // credentials: {
+    //   private_key: process.env.GOOGLE_PRIVATE_KEY, // Ensure this matches the .env variable
+    //   client_email: process.env.GOOGLE_CLIENT_EMAIL,
+    // },
+    keyFile:'credentials.json',
+    // projectId: process.env.GOOGLE_PROJECT_ID,
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   })
+  console.log(11)
+  const authClient = await auth.getClient()
 
-  const authClient = await auth.getClient();
-  const sheetId = process.env.sheet_id; // Your Spreadsheet ID
 
+  // Google Sheets setup
+  const sheets = google.sheets({version:'v4',auth:authClient})
+  console.log(sheets)
+  // const md = await sheets.spreadsheets.get({auth,spreadsheetId:process.env.sheet_id})
+  // console.log(md)
   const request = {
-    spreadsheetId: sheetId,
+    spreadsheetId: process.env.sheet_id,
     range: 'Sheet1!A1:A',
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
@@ -42,10 +48,10 @@ async function appendToGoogleSheet(data) {
   }
 
   try {
-    const response = await sheets.spreadsheets.values.append(request);
-    console.log('Data added to Google Sheet:', response);
+    const response = await sheets.spreadsheets.values.append(request)
+    console.log('Data added to Google Sheet:', response)
   } catch (err) {
-    console.error('Error adding data to Google Sheet:', err);
+    console.error('Error adding data to Google Sheet:', err)
     throw err // Rethrow to handle in the calling function
   }
 }
@@ -60,6 +66,7 @@ app.post('/submit-form', async (req, res) => {
   const formData = req.body
 
   // Prepare data array for Google Sheets
+  // console.log(req.body)
   const data = [
     formData.name,
     formData.email,
@@ -72,6 +79,8 @@ app.post('/submit-form', async (req, res) => {
     formData.occupation,
     formData.feedback,
   ]
+//   console.log(data)
+// res.status(200).json({message:req.body})
 
   // Append the data to Google Sheets
   try {
