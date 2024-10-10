@@ -56,7 +56,7 @@ async function appendToGoogleSheet(data) {
   });
 
   const authClient = await auth.getClient();
-  const sheetId = 'your-spreadsheet-id';
+  const sheetId = '12GOo_UtMRf70zgty01FkPjAtaVqrpWVGFL8cK7w1F8g'
 
   const request = {
     spreadsheetId: sheetId,
@@ -67,7 +67,7 @@ async function appendToGoogleSheet(data) {
       values: [data], // Data should be an array of arrays
     },
     auth: authClient,
-  };
+  }
 
   try {
     const response = await sheets.spreadsheets.values.append(request);
