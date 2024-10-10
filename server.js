@@ -1,5 +1,4 @@
 // We use require to import packages
-
 const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
@@ -17,20 +16,19 @@ require('dotenv').config() // Load environment variables from .env file
 // Google Sheets setup
 const sheets = google.sheets('v4')
 
-// Function to add a user data to Google Sheets
+// Function to add user data to Google Sheets
 async function appendToGoogleSheet(data) {
-  
-const auth = new google.auth.GoogleAuth({
-  credentials: {
-    private_key: process.env.GOOGLE_PRIVATE_KEY_BASE64,
-    client_email: process.env.GOOGLE_CLIENT_EMAIL,
-  },
-  projectId: process.env.GOOGLE_PROJECT_ID,
-  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-})
+  const auth = new google.auth.GoogleAuth({
+    credentials: {
+      private_key: process.env.GOOGLE_PRIVATE_KEY, // Ensure this matches the .env variable
+      client_email: process.env.GOOGLE_CLIENT_EMAIL,
+    },
+    projectId: process.env.GOOGLE_PROJECT_ID,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  })
 
   const authClient = await auth.getClient();
-  const sheetId = process.env.sheet_id // Your Spreadsheet ID
+  const sheetId = process.env.sheet_id; // Your Spreadsheet ID
 
   const request = {
     spreadsheetId: sheetId,
@@ -48,12 +46,13 @@ const auth = new google.auth.GoogleAuth({
     console.log('Data added to Google Sheet:', response);
   } catch (err) {
     console.error('Error adding data to Google Sheet:', err);
+    throw err // Rethrow to handle in the calling function
   }
 }
 
 // This displays the main page
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html')); // This sends a file to our home page
+  res.sendFile(path.join(__dirname, 'public', 'index.html'))// This sends a file to our home page
 })
 
 // Submit route for when the submit button is clicked
@@ -75,10 +74,13 @@ app.post('/submit-form', async (req, res) => {
   ]
 
   // Append the data to Google Sheets
-  await appendToGoogleSheet(data);
-
-  res.send('Form data submitted');
-});
+  try {
+    await appendToGoogleSheet(data)
+    res.status(200).json({ message: 'Form data submitted successfully' })
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to submit data to Google Sheets' })
+  }
+})
 
 // For when people try to go to sub-URLs that don't exist
 app.use((req, res) => {
@@ -90,4 +92,4 @@ const port = 1012;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
   console.log(`Open http://localhost:${port} in your browser.`);
-})
+});
