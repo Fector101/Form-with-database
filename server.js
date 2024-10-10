@@ -1,9 +1,9 @@
 // We use require to import packages
-const express = require('express')
-const path = require('path')
+const express = require('express')  // Make Backend possible
+const path = require('path')  // To format path properly
 const bodyParser = require('body-parser')
-const { google } = require('googleapis')
-// const {authenticate} = require('@google-cloud/local-auth');
+const { google } = require('googleapis')//For data
+const fs = require('fs')  //To write credentials file
 
 
 // Initializing express app
@@ -13,36 +13,51 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // Loading Environment Variables
-require('dotenv').config() // Load environment variables from .env file
+require('dotenv').config()
 
+
+// Data creating the credentials file in secret and not hosting on github for any one to see
+const credentials={
+  type: process.env.type,
+  project_id: process.env.project_id,
+  private_key_id: process.env.private_key_id,
+  private_key: process.env.private_key,
+  client_email: process.env.client_email,
+  client_id: process.env.client_id,
+  auth_uri: process.env.auth_uri,
+  token_uri: process.env.token_uri,
+  auth_provider_x509_cert_url: process.env.auth_provider_x509_cert_url,
+  client_x509_cert_url: process.env.client_x509_cert_url,
+  universe_domain: process.env.universe_domain,
+  sheet_id: process.env.sheet_id,
+}
 
 // Function to add user data to Google Sheets
 async function appendToGoogleSheet(data) {
+  
+  // Creating credentials.json file
+  fs.writeFileSync('credentials.json',JSON.stringify(credentials,null,2))
+
+  // Inserting credentials.json Into Parser
   const auth = new google.auth.GoogleAuth({
-    // credentials: {
-    //   private_key: process.env.GOOGLE_PRIVATE_KEY, // Ensure this matches the .env variable
-    //   client_email: process.env.GOOGLE_CLIENT_EMAIL,
-    // },
-    keyFile:'credentials.json',
-    // projectId: process.env.GOOGLE_PROJECT_ID,
+    keyFile:path.join(__dirname,'credentials.json'),
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   })
-  console.log(11)
-  const authClient = await auth.getClient()
 
+  // Getting authentication For Parsed Object 
+  const authClient = await auth.getClient()
 
   // Google Sheets setup
   const sheets = google.sheets({version:'v4',auth:authClient})
-  console.log(sheets)
-  // const md = await sheets.spreadsheets.get({auth,spreadsheetId:process.env.sheet_id})
-  // console.log(md)
+
+  // Our Request to Google sheets
   const request = {
     spreadsheetId: process.env.sheet_id,
     range: 'Sheet1!A1:A',
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
     resource: {
-      values: [data], // Data should be an array of arrays
+      values: [data],//Data must be in can array
     },
     auth: authClient,
   }
@@ -52,7 +67,7 @@ async function appendToGoogleSheet(data) {
     console.log('Data added to Google Sheet:', response)
   } catch (err) {
     console.error('Error adding data to Google Sheet:', err)
-    throw err // Rethrow to handle in the calling function
+    throw err
   }
 }
 
@@ -66,7 +81,7 @@ app.post('/submit-form', async (req, res) => {
   const formData = req.body
 
   // Prepare data array for Google Sheets
-  // console.log(req.body)
+  // You can change this to fix your HTML form names
   const data = [
     formData.name,
     formData.email,
@@ -79,8 +94,6 @@ app.post('/submit-form', async (req, res) => {
     formData.occupation,
     formData.feedback,
   ]
-//   console.log(data)
-// res.status(200).json({message:req.body})
 
   // Append the data to Google Sheets
   try {
