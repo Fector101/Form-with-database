@@ -17,7 +17,7 @@ require('dotenv').config() // Load environment variables from .env file
 // Google Sheets setup
 const sheets = google.sheets('v4')
 
-// Function to add user data to Google Sheets
+// Function to add a user data to Google Sheets
 async function appendToGoogleSheet(data) {
   const auth = new google.auth.GoogleAuth({
     keyFile: 'credentials.json',
