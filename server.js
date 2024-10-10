@@ -19,13 +19,18 @@ const sheets = google.sheets('v4')
 
 // Function to add a user data to Google Sheets
 async function appendToGoogleSheet(data) {
-  const auth = new google.auth.GoogleAuth({
-    keyFile: path.join(__dirname,'credentials.json'),
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  })
+  
+const auth = new google.auth.GoogleAuth({
+  credentials: {
+    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    client_email: process.env.GOOGLE_CLIENT_EMAIL,
+  },
+  projectId: process.env.GOOGLE_PROJECT_ID,
+  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+})
 
   const authClient = await auth.getClient();
-  const sheetId = '12GOo_UtMRf70zgty01FkPjAtaVqrpWVGFL8cK7w1F8g'; // Your Spreadsheet ID
+  const sheetId = process.env.sheet_id // Your Spreadsheet ID
 
   const request = {
     spreadsheetId: sheetId,
