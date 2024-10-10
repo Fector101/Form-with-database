@@ -31,16 +31,16 @@ const credentials={
   universe_domain: process.env.universe_domain,
   sheet_id: process.env.sheet_id,
 }
+console.log(credentials)
+// Creating credentials.json file
+fs.writeFileSync('credentials.json',JSON.stringify(credentials,null,2))
 
 // Function to add user data to Google Sheets
 async function appendToGoogleSheet(data) {
-  
-  // Creating credentials.json file
-  fs.writeFileSync('credentials.json',JSON.stringify(credentials,null,2))
 
   // Inserting credentials.json Into Parser
   const auth = new google.auth.GoogleAuth({
-    keyFile:path.join(__dirname,'credentials.json'),
+    keyFile:'credentials.json',
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   })
 
