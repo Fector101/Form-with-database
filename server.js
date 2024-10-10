@@ -1,12 +1,16 @@
 // We use require to import packages
-const mysql = require('mysql2')
+const mysql = require('mysql');
 const express = require('express')
 const bcrypt = require('bcrypt')
 const path = require('path')
+
+const bodyParser = require('body-parser')
 // intiliaizing express app
 const app = express()
 
 app.use(express.static(path.join(__dirname,'public')))
+
+app.use(bodyParser.urlencoded({ extended: true }))
 
 //  Loading Enivornment Variables
 require('dotenv').config(); // Load environment variables from .env file
@@ -32,35 +36,23 @@ app.get('/',(req,res)=>{
     res.sendFile(__dirname+'/public/index.html') //This sends a file to our home page
 })
 
+
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'password',
+  database: 'form_db'
+});
+
 // submit route 'for when the submit button is clicked'
-app.post('/submit', async (req, res) => {
-    const { name, email, password, phone, age, gender, comments } = req.body;
-    // console.log(name, email, password, phone, age, gender, comments)
-
-    const hashedPassword = await bcrypt.hash(password, 10);// Hash the password for security
-
-    // Inserts new user in table
-    const query = 'INSERT INTO users (name, email, password, phone, age, gender, comments) VALUES (?, ?, ?, ?, ?, ?, ?)'
-    db.query(query, [name, email,hashedPassword, phone, age, gender, comments], (err, result) => {
-        if (err) {
-            console.error('Error inserting user:', err)
-            return res.status(500).json({ error: 'Database error' })
-        }
-        res.status(200).json({ message: 'User signed up successfully!' })
-    })
-})
-
-
-// Example of another rotue to see visit(localhost:1012/product-example)
-app.get('/product-example',(req,res)=>{
-    res.write('<body>Some Lame Product.</body>')
-    res.end()
-})
-
-app.get('/get-users',(req,res)=>{
-    res.status(200).json({ message: 'All User data backend.'})
-})
-
+app.post('/submit-form', (req, res) => {
+  const formData = req.body;
+  const sql = `INSERT INTO form_data (name, email, age, phone, gender, address, country, dob, occupation, feedback) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+  db.query(sql, [formData.name, formData.email, formData.age, formData.phone, formData.gender, formData.address, formData.country, formData.dob, formData.occupation, formData.feedback], (err, result) => {
+    if (err) throw err;
+    res.send('Form data submitted');
+  });
+});
 // For when people try to go to sub-url's that don't exist
 app.use((req,res)=>{
     res.status(404).send(`Page Sinked, i.e Page dosen't exist`)
