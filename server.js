@@ -3,7 +3,6 @@ const express = require('express')  // Make Backend possible
 const path = require('path')  // To format path properly
 const bodyParser = require('body-parser')
 const { google } = require('googleapis')//For data
-const fs = require('fs')  //To write credentials file
 
 
 // Initializing express app
@@ -16,31 +15,12 @@ app.use(bodyParser.urlencoded({ extended: true }))  // To be able to parse data 
 require('dotenv').config()
 
 
-// Data creating the credentials file in secret and not hosting on github for any one to see
-const credentials={
-  type: process.env.type,
-  project_id: process.env.project_id,
-  private_key_id: process.env.private_key_id,
-  private_key: process.env.private_key,
-  client_email: process.env.client_email,
-  client_id: process.env.client_id,
-  auth_uri: process.env.auth_uri,
-  token_uri: process.env.token_uri,
-  auth_provider_x509_cert_url: process.env.auth_provider_x509_cert_url,
-  client_x509_cert_url: process.env.client_x509_cert_url,
-  universe_domain: process.env.universe_domain,
-  sheet_id: process.env.sheet_id,
-}
-console.log(credentials)
-// Creating credentials.json file
-fs.writeFileSync('credentials.json',JSON.stringify(credentials,null,2))
-
 // Function to add user data to Google Sheets
 async function appendToGoogleSheet(data) {
 
   // Inserting credentials.json Into Parser
   const auth = new google.auth.GoogleAuth({
-    keyFile:'credentials.json',
+    keyFile: path.join(__dirname,'credentials.json'),
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   })
 

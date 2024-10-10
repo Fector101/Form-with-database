@@ -4,7 +4,8 @@
   "description": "Learning about Express JS",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "prebuild":"node create-cred-file.js",
   },
   "author": "Fabian Joseph",
   "license": "ISC",
