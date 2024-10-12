@@ -11,7 +11,7 @@ const app = express()
 app.use(express.static(path.join(__dirname, 'public'))) // Telling express to use public folder as HTML root path
 app.use(bodyParser.urlencoded({ extended: true }))  // To be able to parse data from form
 
-// Loading Environment Variables
+// Loading Environment Variables.
 require('dotenv').config()
 
 
